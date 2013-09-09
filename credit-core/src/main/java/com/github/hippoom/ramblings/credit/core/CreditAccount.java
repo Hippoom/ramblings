@@ -16,8 +16,8 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 	@AggregateIdentifier
 	private Long id;
 	private int balance;
-	private Date effectiveDateRangeStart;
-	private Date effectiveDateRangeEnd;
+	private DateRange effectiveDateRange;
+
 	private Status status;
 
 	@CommandHandler
@@ -34,21 +34,21 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 	}
 
 	@CommandHandler
-	public void markCompleted(MakeCreditAccountEffectiveCommand command) {
+	public void makeEffective(MakeCreditAccountEffectiveCommand command) {
 		apply(new CreditAccountMadeEffectiveEvent(command.getStart(),
 				command.getEnd()));
 	}
 
 	@EventHandler
 	public void on(CreditAccountMadeEffectiveEvent event) {
-		this.effectiveDateRangeStart = event.getStart();
-		this.effectiveDateRangeEnd = event.getEnd();
+		this.effectiveDateRange = new DateRange(event.getStart(),
+				event.getEnd());
 		this.status = Status.EFFECTIVE;
 	}
 
 	@CommandHandler
 	public void transfer(TransferCreditCommand command) {
-		if (isEffective()) {
+		if (isEffectiveFor(command.getNow())) {
 			if (enoughCreditsFor(command.getAmount())) {
 				apply(new CreditAccountBalanceChangedEvent(command.getAmount()));
 			} else {
@@ -65,6 +65,10 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 		}
 	}
 
+	private boolean isEffectiveFor(Date now) {
+		return isEffective() && getEffectiveDateRange().covers(now);
+	}
+
 	private boolean enoughCreditsFor(int amount) {
 		final int balance = add(this.balance, amount);
 		return balance >= 0;
@@ -73,6 +77,16 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 	@EventHandler
 	public void on(CreditAccountBalanceChangedEvent event) {
 		this.balance = add(this.balance, event.getAmount());
+	}
+
+	@CommandHandler
+	public void expire(ExpireCreditAccountCommand command) {
+		apply(new CreditAccountExpiredEvent(command.getAccountId()));
+	}
+
+	@EventHandler
+	public void on(CreditAccountExpiredEvent event) {
+		this.status = Status.EXPIRED;
 	}
 
 	private int add(int current, int amount) {
@@ -97,5 +111,21 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 
 	private boolean is(Status status) {
 		return this.status == status;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public int getBalance() {
+		return balance;
+	}
+
+	public DateRange getEffectiveDateRange() {
+		return effectiveDateRange;
+	}
+
+	public Status getStatus() {
+		return status;
 	}
 }

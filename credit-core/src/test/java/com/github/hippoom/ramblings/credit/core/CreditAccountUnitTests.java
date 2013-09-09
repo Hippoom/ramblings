@@ -33,10 +33,6 @@ public class CreditAccountUnitTests {
 		// assertThat(entry.isNew(), is(true));
 	}
 
-	private CreateCreditAccountCommand createCreditAccount() {
-		return new CreateCreditAccountCommand(1L, 100);
-	}
-
 	@Test
 	public void creditAccountMadeEffective() throws Throwable {
 		final Long accountId = 1L;
@@ -61,7 +57,8 @@ public class CreditAccountUnitTests {
 
 		fixture.given(new CreditAccountCreatedEvent(accountId, amount),
 				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new TransferCreditCommand(accountId, amount))
+				.when(new TransferCreditCommand(accountId, amount,
+						nov(2012, 10)))
 				.expectEvents(new CreditAccountBalanceChangedEvent(amount));
 
 	}
@@ -73,7 +70,21 @@ public class CreditAccountUnitTests {
 		final int amount = 100;
 
 		fixture.given(new CreditAccountCreatedEvent(accountId, amount))
-				.when(new TransferCreditCommand(accountId, amount))
+				.when(new TransferCreditCommand(accountId, amount,
+						nov(2012, 10)))
+				.expectException(IllegalStateException.class);
+
+	}
+
+	@Test
+	public void throwExceptionWhenCreditTransferedGivenAccountIsExpired()
+			throws Throwable {
+		final Long accountId = 1L;
+		final Date start = nov(2011, 12);
+		final Date end = nov(2012, 12);// a year effective period
+		fixture.given(new CreditAccountCreatedEvent(accountId, 100),
+				new CreditAccountMadeEffectiveEvent(start, end))
+				.when(new TransferCreditCommand(accountId, -80, nov(2012, 13)))
 				.expectException(IllegalStateException.class);
 
 	}
@@ -86,8 +97,22 @@ public class CreditAccountUnitTests {
 		final Date end = nov(2012, 12);// a year effective period
 		fixture.given(new CreditAccountCreatedEvent(accountId, 100),
 				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new TransferCreditCommand(accountId, -1000))
+				.when(new TransferCreditCommand(accountId, -1000, nov(2012, 10)))
 				.expectException(IllegalStateException.class);
+
+	}
+
+	@Test
+	public void expired() throws Throwable {
+		final Long accountId = 1L;
+		final int amount = 100;
+		final Date start = nov(2011, 12);
+		final Date end = nov(2012, 12);// a year effective period
+
+		fixture.given(new CreditAccountCreatedEvent(accountId, amount),
+				new CreditAccountMadeEffectiveEvent(start, end))
+				.when(new ExpireCreditAccountCommand(accountId))
+				.expectEvents(new CreditAccountExpiredEvent(accountId));
 
 	}
 
