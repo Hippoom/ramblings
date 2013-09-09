@@ -5,17 +5,17 @@ import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 public class CreateCreditAccountCommand {
 
 	@TargetAggregateIdentifier
-	private final Long entryId;
+	private final Long accountId;
 
 	private final int amount;
 
-	public CreateCreditAccountCommand(Long entryId, int amount) {
-		this.entryId = entryId;
+	public CreateCreditAccountCommand(Long accountId, int amount) {
+		this.accountId = accountId;
 		this.amount = amount;
 	}
 
-	public Long getEntryId() {
-		return entryId;
+	public Long getAccountId() {
+		return accountId;
 	}
 
 	public int getAmount() {

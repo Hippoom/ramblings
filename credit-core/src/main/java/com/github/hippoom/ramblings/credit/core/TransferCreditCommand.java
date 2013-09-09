@@ -1,12 +1,13 @@
 package com.github.hippoom.ramblings.credit.core;
 
-public class CreditAccountCreatedEvent {
+import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 
+public class TransferCreditCommand {
+	@TargetAggregateIdentifier
 	private final Long accountId;
-
 	private final int amount;
 
-	public CreditAccountCreatedEvent(Long accountId, int amount) {
+	public TransferCreditCommand(Long accountId, int amount) {
 		this.accountId = accountId;
 		this.amount = amount;
 	}
@@ -18,5 +19,4 @@ public class CreditAccountCreatedEvent {
 	public int getAmount() {
 		return amount;
 	}
-
 }
