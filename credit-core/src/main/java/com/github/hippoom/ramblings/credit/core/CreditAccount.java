@@ -1,6 +1,6 @@
 package com.github.hippoom.ramblings.credit.core;
 
-import static com.github.hippoom.ramblings.credit.core.CreditEntry.Status.*;
+import static com.github.hippoom.ramblings.credit.core.CreditAccount.Status.*;
 
 import java.util.Date;
 
@@ -9,44 +9,44 @@ import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
-public class CreditEntry extends AbstractAnnotatedAggregateRoot<Long> {
+public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 
 	private static final long serialVersionUID = 1L;
 
 	@AggregateIdentifier
 	private Long id;
-	private int amount;
+	private int balance;
 	private Date effectiveDateRangeStart;
 	private Date effectiveDateRangeEnd;
 	private Status status;
 
 	@CommandHandler
-	public CreditEntry(CreateCreditEntryCommand command) {
-		apply(new CreditEntryCreatedEvent(command.getEntryId(),
+	public CreditAccount(CreateCreditAccountCommand command) {
+		apply(new CreditAccountCreatedEvent(command.getEntryId(),
 				command.getAmount()));
 	}
 
 	@EventHandler
-	public void on(CreditEntryCreatedEvent event) {
+	public void on(CreditAccountCreatedEvent event) {
 		this.id = event.getEntryId();
-		this.amount = event.getAmount();
+		this.balance = event.getAmount();
 		this.status = Status.NEW;
 	}
 
 	@CommandHandler
-	public void markCompleted(MakeCreditEntryEffectiveCommand command) {
-		apply(new CreditEntryMadeEffectiveEvent(command.getEntryId(),
+	public void markCompleted(MakeCreditAccountEffectiveCommand command) {
+		apply(new CreditAccountMadeEffectiveEvent(command.getEntryId(),
 				command.getStart(), command.getEnd()));
 	}
 
 	@EventHandler
-	public void on(CreditEntryMadeEffectiveEvent event) {
+	public void on(CreditAccountMadeEffectiveEvent event) {
 		this.effectiveDateRangeStart = event.getStart();
 		this.effectiveDateRangeEnd = event.getEnd();
 		this.status = Status.EFFECTIVE;
 	}
 
-	public CreditEntry() {
+	public CreditAccount() {
 
 	}
 

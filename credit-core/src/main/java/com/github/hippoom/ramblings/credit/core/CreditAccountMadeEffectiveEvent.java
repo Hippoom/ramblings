@@ -2,15 +2,12 @@ package com.github.hippoom.ramblings.credit.core;
 
 import java.util.Date;
 
-import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
-
-public class MakeCreditEntryEffectiveCommand {
-	@TargetAggregateIdentifier
+public class CreditAccountMadeEffectiveEvent {
 	private final Long entryId;
 	private final Date start;
 	private final Date end;
 
-	public MakeCreditEntryEffectiveCommand(Long entryId, Date start, Date end) {
+	public CreditAccountMadeEffectiveEvent(Long entryId, Date start, Date end) {
 		this.entryId = entryId;
 		this.start = start;
 		this.end = end;

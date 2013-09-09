@@ -11,22 +11,22 @@ import org.axonframework.test.Fixtures;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CreditEntryUnitTests {
+public class CreditAccountUnitTests {
 
-	private FixtureConfiguration<CreditEntry> fixture;
+	private FixtureConfiguration<CreditAccount> fixture;
 
 	@Before
 	public void setUp() throws Exception {
-		fixture = Fixtures.newGivenWhenThenFixture(CreditEntry.class);
+		fixture = Fixtures.newGivenWhenThenFixture(CreditAccount.class);
 	}
 
 	@Test
-	public void creditEntryCreated() throws Throwable {
+	public void creditAccountCreated() throws Throwable {
 		final Long entryId = 1L;
 		final int amount = 100;
 
-		fixture.given().when(new CreateCreditEntryCommand(entryId, amount))
-				.expectEvents(new CreditEntryCreatedEvent(entryId, amount));
+		fixture.given().when(new CreateCreditAccountCommand(entryId, amount))
+				.expectEvents(new CreditAccountCreatedEvent(entryId, amount));
 
 		//final CreditEntry entry = fixture.getRepository().load(entryId);
 
@@ -34,16 +34,16 @@ public class CreditEntryUnitTests {
 	}
 
 	@Test
-	public void creditEntryMadeEffective() throws Throwable {
+	public void creditAccountMadeEffective() throws Throwable {
 		final Long entryId = 1L;
 		final int amount = 100;
 		final Date start = nov(2011, 12);
 		final Date end = nov(2012, 12);// a year effective period
 
-		fixture.given(new CreditEntryCreatedEvent(entryId, amount))
-				.when(new MakeCreditEntryEffectiveCommand(entryId, start, end))
+		fixture.given(new CreditAccountCreatedEvent(entryId, amount))
+				.when(new MakeCreditAccountEffectiveCommand(entryId, start, end))
 				.expectEvents(
-						new CreditEntryMadeEffectiveEvent(entryId, start, end));
+						new CreditAccountMadeEffectiveEvent(entryId, start, end));
 
 	}
 
