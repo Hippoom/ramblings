@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.credit.core;
+package com.github.hippoom.ramblings.credit.domain.model.creditaccount;
 
 import java.util.Date;
 
@@ -7,9 +7,8 @@ import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
+@SuppressWarnings("serial")
 public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
-
-	private static final long serialVersionUID = 1L;
 
 	@AggregateIdentifier
 	private Long id;
@@ -25,13 +24,13 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 	}
 
 	@EventHandler
-	public void on(CreditAccountCreatedEvent event) {
+	private void on(CreditAccountCreatedEvent event) {
 		this.id = event.getAccountId();
 		this.effectiveDateRange = event.getEffectiveDateRange();
 	}
 
 	@CommandHandler
-	public void transfer(ConsumeCreditCommand command) {
+	public void consume(ConsumeCreditCommand command) {
 		if (isEffectiveFor(command.getNow())) {
 			if (enoughCreditsFor(command.getAmountConsumed())) {
 				apply(new CreditAccountBalanceChangedEvent(
@@ -50,6 +49,12 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 		}
 	}
 
+	@CommandHandler
+	public void expire(ExpireCreditAccountCommand command) {
+		apply(new CreditAccountBalanceChangedEvent(command.getAccountId(),
+				getBalance() * -1));
+	}
+
 	private boolean isEffectiveFor(Date now) {
 		return getEffectiveDateRange().covers(now);
 	}
@@ -60,7 +65,7 @@ public class CreditAccount extends AbstractAnnotatedAggregateRoot<Long> {
 	}
 
 	@EventHandler
-	public void on(CreditAccountBalanceChangedEvent event) {
+	private void on(CreditAccountBalanceChangedEvent event) {
 		this.balance = add(this.balance, event.getAmount());
 	}
 

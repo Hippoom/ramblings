@@ -7,10 +7,10 @@
 	<axon:event-bus id="eventBus" />
 
 	<axon:event-sourcing-repository id="creditAccountRepository"
-		aggregate-type="com.github.hippoom.ramblings.credit.core.CreditAccount" />
+		aggregate-type="com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreditAccount" />
 
 	<axon:aggregate-command-handler id="creditAccountHandler"
-		aggregate-type="com.github.hippoom.ramblings.credit.core.CreditAccount"
+		aggregate-type="com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreditAccount"
 		repository="creditAccountRepository" command-bus="commandBus" />
 
 	<axon:filesystem-event-store id="eventStore"
@@ -21,4 +21,9 @@
 		<property name="commandBus" ref="commandBus" />
 	</bean>
 
+	<axon:annotation-config />
+	<bean
+		class="com.github.hippoom.ramblings.credit.infrastructure.cqrs.CreditAccountEventHandler">
+		<property name="creditAccountReadModelStore" ref="creditAccountReadModelStore" />
+	</bean>
 </beans>

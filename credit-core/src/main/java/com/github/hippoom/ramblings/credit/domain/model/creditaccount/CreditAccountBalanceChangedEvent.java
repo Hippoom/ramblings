@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.credit.core;
+package com.github.hippoom.ramblings.credit.domain.model.creditaccount;
 
 import lombok.ToString;
 
