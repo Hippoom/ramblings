@@ -14,10 +14,10 @@ public class ApplicationRunner {
 		CommandGateway runner = applicationContext
 				.getBean(CommandGateway.class);
 		final Long accountId = 3L;
-		runner.send(new CreateCreditAccountCommand(accountId, 0));
-
-		runner.send(new MakeCreditAccountEffectiveCommand(accountId,
-				new Date(), new Date()));
+//		runner.send(new CreateCreditAccountCommand(accountId, 0));
+//
+//		runner.send(new MakeCreditAccountEffectiveCommand(accountId,
+//				new Date(), new Date()));
 	}
 
 }

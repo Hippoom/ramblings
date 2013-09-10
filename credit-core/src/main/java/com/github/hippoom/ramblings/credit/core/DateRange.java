@@ -2,6 +2,11 @@ package com.github.hippoom.ramblings.credit.core;
 
 import java.util.Date;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@ToString
+@EqualsAndHashCode
 public class DateRange {
 	public Date effectiveDateRangeStart;
 	public Date effectiveDateRangeEnd;

@@ -1,22 +1,25 @@
 package com.github.hippoom.ramblings.credit.core;
 
+import lombok.ToString;
+
+@ToString
 public class CreditAccountCreatedEvent {
 
 	private final Long accountId;
+	private final DateRange effectiveDateRange;
 
-	private final int amount;
-
-	public CreditAccountCreatedEvent(Long accountId, int amount) {
+	public CreditAccountCreatedEvent(Long accountId,
+			DateRange effectiveDateRange) {
 		this.accountId = accountId;
-		this.amount = amount;
+		this.effectiveDateRange = effectiveDateRange;
 	}
 
 	public Long getAccountId() {
 		return accountId;
 	}
 
-	public int getAmount() {
-		return amount;
+	public DateRange getEffectiveDateRange() {
+		return effectiveDateRange;
 	}
 
 }

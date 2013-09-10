@@ -1,8 +1,5 @@
 package com.github.hippoom.ramblings.credit.core;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -13,110 +10,82 @@ import org.junit.Test;
 
 public class CreditAccountUnitTests {
 
+	private static final Date DATE_EXPIRED = nov(2012, 13);
+	private static final Date EFFECTIVE_END = nov(2012, 12);
+	private static final Date EFFECTIVE_START = nov(2011, 12);
+	private static final long ACCOUNT_ID = 1L;
+	private static final int EQUAL_OR_LESS_THAN_BALANCE = 100;
+	private static final int GREATER_THAN_BALANCE = 110;
+	private static final int INITIAL_BALANCE = 100;
 	private FixtureConfiguration<CreditAccount> fixture;
 
+	private static final CreateCreditAccountCommand CREATE_ACCOUNT = new CreateCreditAccountCommand(
+			ACCOUNT_ID, INITIAL_BALANCE, EFFECTIVE_START, EFFECTIVE_END);
+	private static final CreditAccountBalanceChangedEvent INTIAL_BALANCE_CHANGED = new CreditAccountBalanceChangedEvent(
+			CREATE_ACCOUNT.getAccountId(), CREATE_ACCOUNT.getAmount());
+	private static final CreditAccountCreatedEvent CREDIT_ACCOUNT_CREATED = new CreditAccountCreatedEvent(
+			CREATE_ACCOUNT.getAccountId(),
+			CREATE_ACCOUNT.getEffectiveDateRange());
+
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws Throwable {
 		fixture = Fixtures.newGivenWhenThenFixture(CreditAccount.class);
+
 	}
 
 	@Test
 	public void creditAccountCreated() throws Throwable {
-		final Long accountId = 1L;
-		final int amount = 100;
 
-		fixture.given().when(new CreateCreditAccountCommand(accountId, amount))
-				.expectEvents(new CreditAccountCreatedEvent(accountId, amount));
-
-		// final CreditEntry entry = fixture.getRepository().load(entryId);
-
-		// assertThat(entry.isNew(), is(true));
-	}
-
-	@Test
-	public void creditAccountMadeEffective() throws Throwable {
-		final Long accountId = 1L;
-		final int amount = 100;
-		final Date start = nov(2011, 12);
-		final Date end = nov(2012, 12);// a year effective period
-
-		fixture.given(new CreditAccountCreatedEvent(accountId, amount))
-				.when(new MakeCreditAccountEffectiveCommand(accountId, start,
-						end))
-				.expectEvents(new CreditAccountMadeEffectiveEvent(start, end));
+		fixture.given().when(CREATE_ACCOUNT)
+				.expectEvents(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED);
 
 	}
 
 	@Test
-	public void creditAccountBalanceChangedWhenCreditTransfered()
+	public void creditAccountBalanceChangedWhenCreditConsumed()
 			throws Throwable {
-		final Long accountId = 1L;
-		final int amount = 100;
-		final Date start = nov(2011, 12);
-		final Date end = nov(2012, 12);// a year effective period
+		ConsumeCreditCommand consumeCredit = new ConsumeCreditCommand(
+				ACCOUNT_ID, EQUAL_OR_LESS_THAN_BALANCE, EFFECTIVE_END);
 
-		fixture.given(new CreditAccountCreatedEvent(accountId, amount),
-				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new TransferCreditCommand(accountId, amount,
-						nov(2012, 10)))
-				.expectEvents(new CreditAccountBalanceChangedEvent(amount));
-
-	}
-
-	@Test
-	public void throwExceptionWhenCreditTransferedGivenAccountIsNotEffective()
-			throws Throwable {
-		final Long accountId = 1L;
-		final int amount = 100;
-
-		fixture.given(new CreditAccountCreatedEvent(accountId, amount))
-				.when(new TransferCreditCommand(accountId, amount,
-						nov(2012, 10)))
-				.expectException(IllegalStateException.class);
+		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
+				.when(consumeCredit)
+				.expectEvents(
+						new CreditAccountBalanceChangedEvent(consumeCredit
+								.getAccountId(), consumeCredit
+								.getAmountConsumed()));
 
 	}
 
 	@Test
 	public void throwExceptionWhenCreditTransferedGivenAccountIsExpired()
 			throws Throwable {
-		final Long accountId = 1L;
-		final Date start = nov(2011, 12);
-		final Date end = nov(2012, 12);// a year effective period
-		fixture.given(new CreditAccountCreatedEvent(accountId, 100),
-				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new TransferCreditCommand(accountId, -80, nov(2012, 13)))
+
+		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
+				.when(consumeExpiredCredits())
 				.expectException(IllegalStateException.class);
 
+	}
+
+	private ConsumeCreditCommand consumeExpiredCredits() {
+		return new ConsumeCreditCommand(ACCOUNT_ID,
+				EQUAL_OR_LESS_THAN_BALANCE, DATE_EXPIRED);
 	}
 
 	@Test
 	public void throwExceptionWhenCreditTransferedGivenNotEnoughCredits()
 			throws Throwable {
-		final Long accountId = 1L;
-		final Date start = nov(2011, 12);
-		final Date end = nov(2012, 12);// a year effective period
-		fixture.given(new CreditAccountCreatedEvent(accountId, 100),
-				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new TransferCreditCommand(accountId, -1000, nov(2012, 10)))
+		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
+				.when(consumeTooManyCredits())
 				.expectException(IllegalStateException.class);
 
 	}
 
-	@Test
-	public void expired() throws Throwable {
-		final Long accountId = 1L;
-		final int amount = 100;
-		final Date start = nov(2011, 12);
-		final Date end = nov(2012, 12);// a year effective period
-
-		fixture.given(new CreditAccountCreatedEvent(accountId, amount),
-				new CreditAccountMadeEffectiveEvent(start, end))
-				.when(new ExpireCreditAccountCommand(accountId))
-				.expectEvents(new CreditAccountExpiredEvent(accountId));
-
+	private ConsumeCreditCommand consumeTooManyCredits() {
+		return new ConsumeCreditCommand(ACCOUNT_ID,
+				GREATER_THAN_BALANCE, EFFECTIVE_END);
 	}
 
-	private Date nov(int year, int day) {
+	private static Date nov(int year, int day) {
 		Calendar c = Calendar.getInstance();
 		c.set(year, Calendar.NOVEMBER, day);
 		return c.getTime();

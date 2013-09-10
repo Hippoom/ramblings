@@ -4,13 +4,13 @@ import java.util.Date;
 
 import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 
-public class TransferCreditCommand {
+public class ConsumeCreditCommand {
 	@TargetAggregateIdentifier
 	private final Long accountId;
 	private final int amount;
 	private final Date now;
 
-	public TransferCreditCommand(Long accountId, int amount, Date now) {
+	public ConsumeCreditCommand(Long accountId, int amount, Date now) {
 		this.accountId = accountId;
 		this.amount = amount;
 		this.now = now;
@@ -26,5 +26,9 @@ public class TransferCreditCommand {
 
 	public Date getNow() {
 		return now;
+	}
+
+	public int getAmountConsumed() {
+		return -1 * getAmount();
 	}
 }
