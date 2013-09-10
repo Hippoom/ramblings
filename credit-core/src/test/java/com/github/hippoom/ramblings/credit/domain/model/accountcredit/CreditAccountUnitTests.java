@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.credit.core;
+package com.github.hippoom.ramblings.credit.domain.model.accountcredit;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -7,6 +7,13 @@ import org.axonframework.test.FixtureConfiguration;
 import org.axonframework.test.Fixtures;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.ConsumeCreditCommand;
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreateCreditAccountCommand;
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreditAccount;
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreditAccountBalanceChangedEvent;
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.CreditAccountCreatedEvent;
+import com.github.hippoom.ramblings.credit.domain.model.creditaccount.ExpireCreditAccountCommand;
 
 public class CreditAccountUnitTests {
 
@@ -42,8 +49,7 @@ public class CreditAccountUnitTests {
 	}
 
 	@Test
-	public void creditAccountBalanceChangedWhenCreditConsumed()
-			throws Throwable {
+	public void creditAccountBalanceChangedWhenConsumeCredit() throws Throwable {
 		ConsumeCreditCommand consumeCredit = new ConsumeCreditCommand(
 				ACCOUNT_ID, EQUAL_OR_LESS_THAN_BALANCE, EFFECTIVE_END);
 
@@ -57,7 +63,7 @@ public class CreditAccountUnitTests {
 	}
 
 	@Test
-	public void throwExceptionWhenCreditTransferedGivenAccountIsExpired()
+	public void throwExceptionWhenConsumeCreditGivenAccountIsExpired()
 			throws Throwable {
 
 		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
@@ -67,12 +73,12 @@ public class CreditAccountUnitTests {
 	}
 
 	private ConsumeCreditCommand consumeExpiredCredits() {
-		return new ConsumeCreditCommand(ACCOUNT_ID,
-				EQUAL_OR_LESS_THAN_BALANCE, DATE_EXPIRED);
+		return new ConsumeCreditCommand(ACCOUNT_ID, EQUAL_OR_LESS_THAN_BALANCE,
+				DATE_EXPIRED);
 	}
 
 	@Test
-	public void throwExceptionWhenCreditTransferedGivenNotEnoughCredits()
+	public void throwExceptionWhenConsumeCreditGivenNotEnoughCredits()
 			throws Throwable {
 		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
 				.when(consumeTooManyCredits())
@@ -80,9 +86,20 @@ public class CreditAccountUnitTests {
 
 	}
 
+	@Test
+	public void creditAccountBalanceChangedToZeroWhenExpireAccount()
+			throws Throwable {
+		fixture.given(CREDIT_ACCOUNT_CREATED, INTIAL_BALANCE_CHANGED)
+				.when(new ExpireCreditAccountCommand(ACCOUNT_ID))
+				.expectEvents(
+						new CreditAccountBalanceChangedEvent(ACCOUNT_ID,
+								INITIAL_BALANCE * -1));
+
+	}
+
 	private ConsumeCreditCommand consumeTooManyCredits() {
-		return new ConsumeCreditCommand(ACCOUNT_ID,
-				GREATER_THAN_BALANCE, EFFECTIVE_END);
+		return new ConsumeCreditCommand(ACCOUNT_ID, GREATER_THAN_BALANCE,
+				EFFECTIVE_END);
 	}
 
 	private static Date nov(int year, int day) {
