@@ -4,10 +4,12 @@ import lombok.ToString;
 
 @ToString
 public class AirTicketItemCreatedEvent {
+	private final Long ticketId;
 	private final int rph;
 	private final double fare;
 
-	public AirTicketItemCreatedEvent(int rph, double fare) {
+	public AirTicketItemCreatedEvent(Long ticketId, int rph, double fare) {
+		this.ticketId = ticketId;
 		this.rph = rph;
 		this.fare = fare;
 	}
@@ -18,5 +20,9 @@ public class AirTicketItemCreatedEvent {
 
 	public double getFare() {
 		return fare;
+	}
+
+	public Long getTicketId() {
+		return ticketId;
 	}
 }

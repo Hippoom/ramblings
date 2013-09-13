@@ -23,9 +23,9 @@ public class AirTicketUnitTests {
 				.when(new CreateAirTicketCommand(id, reservationId, fares))
 				.expectEvents(
 						new AirTicketCreatedEvent(id, reservationId,
-								AirTicket.Status.NEW),
-						new AirTicketItemCreatedEvent(1, 100.00),
-						new AirTicketItemCreatedEvent(2, 200.00));
+								AirTicket.Status.NEW, 300),
+						new AirTicketItemCreatedEvent(id, 1, 100.00),
+						new AirTicketItemCreatedEvent(id, 2, 200.00));
 
 	}
 
@@ -40,9 +40,9 @@ public class AirTicketUnitTests {
 
 		fixture.given(
 				new AirTicketCreatedEvent(id, reservationId,
-						AirTicket.Status.NEW),
-				new AirTicketItemCreatedEvent(1, 100.00),
-				new AirTicketItemCreatedEvent(2, 200.00))
+						AirTicket.Status.NEW, 300),
+				new AirTicketItemCreatedEvent(id, 1, 100.00),
+				new AirTicketItemCreatedEvent(id, 2, 200.00))
 				.when(new DemandAirTicketCommand(id, number))
 				.expectEvents(
 						new AirTicketDemandedEvent(id, number,
@@ -62,9 +62,9 @@ public class AirTicketUnitTests {
 
 		fixture.given(
 				new AirTicketCreatedEvent(id, reservationId,
-						AirTicket.Status.NEW),
-				new AirTicketItemCreatedEvent(1, 100.00),
-				new AirTicketItemCreatedEvent(2, 200.00),
+						AirTicket.Status.NEW, 300),
+				new AirTicketItemCreatedEvent(id, 1, 100.00),
+				new AirTicketItemCreatedEvent(id, 2, 200.00),
 				new AirTicketDemandedEvent(id, number,
 						AirTicket.Status.DEMANDED))
 				.when(new CancelAirTicketCommand(id, penalty))

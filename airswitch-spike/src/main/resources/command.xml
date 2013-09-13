@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:axon="http://www.axonframework.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
+
+	<axon:command-bus id="commandBus" transaction-manager="transactionManager" />
+	<axon:event-bus id="eventBus" />
+
+	<axon:event-sourcing-repository id="airTicketRepository"
+		aggregate-type="com.github.hippoom.ramblings.airswitch.AirTicket" />
+
+	<axon:aggregate-command-handler id="airTicketHandler"
+		aggregate-type="com.github.hippoom.ramblings.airswitch.AirTicket"
+		repository="airTicketRepository" command-bus="commandBus" />
+
+	<axon:jpa-event-store id="eventStore" />
+
+	<bean
+		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+		<property name="commandBus" ref="commandBus" />
+	</bean>
+
+
+</beans>

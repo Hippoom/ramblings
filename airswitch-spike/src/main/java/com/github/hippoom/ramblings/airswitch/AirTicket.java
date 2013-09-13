@@ -22,13 +22,20 @@ public class AirTicket extends AbstractAnnotatedAggregateRoot<Long> {
 
 	@CommandHandler
 	public AirTicket(CreateAirTicketCommand command) {
-		apply(new AirTicketCreatedEvent(command.getTicketId(),
-				command.getReservationId(), Status.NEW));
+		double total = 0.00;
+		final List<AirTicketItemCreatedEvent> itemCreateds = new ArrayList<AirTicketItemCreatedEvent>();
 		Map<Integer, Double> fares = command.getFares();
 		Iterator<Entry<Integer, Double>> iterator = fares.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<Integer, Double> next = iterator.next();
-			apply(new AirTicketItemCreatedEvent(next.getKey(), next.getValue()));
+			total += next.getValue();
+			itemCreateds.add(new AirTicketItemCreatedEvent(command
+					.getTicketId(), next.getKey(), next.getValue()));
+		}
+		apply(new AirTicketCreatedEvent(command.getTicketId(),
+				command.getReservationId(), Status.NEW, total));
+		for (AirTicketItemCreatedEvent itemCreated : itemCreateds) {
+			apply(itemCreated);
 		}
 	}
 

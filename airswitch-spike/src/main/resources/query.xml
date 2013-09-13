@@ -1,0 +1,11 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:axon="http://www.axonframework.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
+
+	<axon:annotation-config />
+	<bean
+		class="com.github.hippoom.ramblings.airswitch.query.AirTicketDetailSynchronizer" />
+	<bean
+		class="com.github.hippoom.ramblings.airswitch.query.AirTicketItemDetailSynchronizer" />
+</beans>
