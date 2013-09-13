@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.airswitch;
+package com.github.hippoom.ramblings.airswitch.command.ticket;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,25 +52,25 @@ public class AirTicket extends AbstractAnnotatedAggregateRoot<Long> {
 	}
 
 	@EventHandler
-	public void on(AirTicketCreatedEvent event) {
+	protected void on(AirTicketCreatedEvent event) {
 		this.id = event.getTicketId();
 		this.reservationId = event.getReservationId();
 		this.status = event.getStatus();
 	}
 
 	@EventHandler
-	public void on(AirTicketItemCreatedEvent event) {
+	protected void on(AirTicketItemCreatedEvent event) {
 		this.items.add(new AirTicketItem(event.getRph(), event.getFare()));
 	}
 
 	@EventHandler
-	public void on(AirTicketDemandedEvent event) {
+	protected void on(AirTicketDemandedEvent event) {
 		this.status = event.getStatus();
 		this.number = event.getNumber();
 	}
 
 	@EventHandler
-	public void on(AirTicketCanceledEvent event) {
+	protected void on(AirTicketCanceledEvent event) {
 		this.status = event.getStatus();
 	}
 

@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.hippoom.ramblings.airswitch.command.ticket.CancelAirTicketCommand;
+import com.github.hippoom.ramblings.airswitch.command.ticket.CreateAirTicketCommand;
+import com.github.hippoom.ramblings.airswitch.command.ticket.DemandAirTicketCommand;
 import com.github.hippoom.ramblings.airswitch.query.AirTicketDetail;
 import com.github.hippoom.ramblings.airswitch.query.AirTicketItemDetail;
 

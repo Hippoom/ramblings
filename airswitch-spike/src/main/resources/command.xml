@@ -7,10 +7,10 @@
 	<axon:event-bus id="eventBus" />
 
 	<axon:event-sourcing-repository id="airTicketRepository"
-		aggregate-type="com.github.hippoom.ramblings.airswitch.AirTicket" />
+		aggregate-type="com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket" />
 
 	<axon:aggregate-command-handler id="airTicketHandler"
-		aggregate-type="com.github.hippoom.ramblings.airswitch.AirTicket"
+		aggregate-type="com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket"
 		repository="airTicketRepository" command-bus="commandBus" />
 
 	<axon:jpa-event-store id="eventStore" />

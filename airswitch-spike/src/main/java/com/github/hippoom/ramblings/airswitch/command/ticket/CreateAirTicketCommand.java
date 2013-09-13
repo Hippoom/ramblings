@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.airswitch;
+package com.github.hippoom.ramblings.airswitch.command.ticket;
 
 import java.util.Map;
 

@@ -6,9 +6,9 @@ import javax.persistence.PersistenceContext;
 import org.axonframework.eventhandling.annotation.EventHandler;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.hippoom.ramblings.airswitch.AirTicketCanceledEvent;
-import com.github.hippoom.ramblings.airswitch.AirTicketCreatedEvent;
-import com.github.hippoom.ramblings.airswitch.AirTicketDemandedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCanceledEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCreatedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketDemandedEvent;
 
 @Transactional
 public class AirTicketDetailSynchronizer {

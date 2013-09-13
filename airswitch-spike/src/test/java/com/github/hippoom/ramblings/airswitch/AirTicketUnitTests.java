@@ -7,6 +7,15 @@ import org.axonframework.test.FixtureConfiguration;
 import org.axonframework.test.Fixtures;
 import org.junit.Test;
 
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCanceledEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCreatedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketDemandedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketItemCreatedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.CancelAirTicketCommand;
+import com.github.hippoom.ramblings.airswitch.command.ticket.CreateAirTicketCommand;
+import com.github.hippoom.ramblings.airswitch.command.ticket.DemandAirTicketCommand;
+
 public class AirTicketUnitTests {
 	private FixtureConfiguration<AirTicket> fixture = Fixtures
 			.newGivenWhenThenFixture(AirTicket.class);

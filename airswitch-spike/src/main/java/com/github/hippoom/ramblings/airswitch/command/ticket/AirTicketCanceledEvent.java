@@ -1,6 +1,6 @@
-package com.github.hippoom.ramblings.airswitch;
+package com.github.hippoom.ramblings.airswitch.command.ticket;
 
-import com.github.hippoom.ramblings.airswitch.AirTicket.Status;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket.Status;
 
 public class AirTicketCanceledEvent {
 	private final Long ticketId;
