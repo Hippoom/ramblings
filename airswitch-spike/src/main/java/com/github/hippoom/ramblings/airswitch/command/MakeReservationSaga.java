@@ -1,5 +1,8 @@
 package com.github.hippoom.ramblings.airswitch.command;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.Setter;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -7,30 +10,37 @@ import org.axonframework.saga.annotation.AbstractAnnotatedSaga;
 import org.axonframework.saga.annotation.SagaEventHandler;
 import org.axonframework.saga.annotation.StartSaga;
 
-import com.github.hippoom.ramblings.airswitch.command.reservation.AirReservationCreatedEvent;
-import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketFactory;
-import com.github.hippoom.ramblings.airswitch.command.ticket.CreateAirTicketCommand;
+import com.github.hippoom.ramblings.airswitch.command.reservation.AirTicketSubtotalSummedEvent;
+import com.github.hippoom.ramblings.airswitch.command.reservation.CalculateTotalOfReservationCommand;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketItemsCreatedEvent;
 
 @SuppressWarnings("serial")
 public class MakeReservationSaga extends AbstractAnnotatedSaga {
 	@Setter
 	private transient CommandGateway commandGateway;
-	@Setter
-	private transient AirTicketFactory ticketFactory;
+
+	private Map<Long, Boolean> ticketsToSum = new HashMap<Long, Boolean>();
 
 	@StartSaga
 	@SagaEventHandler(associationProperty = "reservationId")
-	public void createTickets(AirReservationCreatedEvent event) {
+	public void createTickets(AirTicketItemsCreatedEvent event) {
 
-		final Long firstTktId = ticketFactory.nextIdentifier();
-		final Long secondTktId = ticketFactory.nextIdentifier();
-		associateWith("ticketId", firstTktId);
-		associateWith("ticketId", secondTktId);
+		ticketsToSum.put(event.getTicketId(), false);
 
-		commandGateway.send(new CreateAirTicketCommand(firstTktId, event
-				.getReservationId(), null));
-		commandGateway.send(new CreateAirTicketCommand(secondTktId, event
-				.getReservationId(), null));
+		commandGateway.send(new CalculateTotalOfReservationCommand(event
+				.getReservationId(), event.getTicketId(), event.getSubtotal()));
 
 	}
+
+	@SagaEventHandler(associationProperty = "reservationId")
+	public void createTickets(AirTicketSubtotalSummedEvent event) {
+		ticketsToSum.put(event.getTicketId(), true);
+
+		if (ticketsToSum.containsValue(false)) {
+			// wait for other tickets get summed
+		} else {
+			end();
+		}
+	}
+
 }

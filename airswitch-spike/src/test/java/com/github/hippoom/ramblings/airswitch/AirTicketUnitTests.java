@@ -12,6 +12,7 @@ import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCanceledEv
 import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketCreatedEvent;
 import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketDemandedEvent;
 import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketItemCreatedEvent;
+import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketItemsCreatedEvent;
 import com.github.hippoom.ramblings.airswitch.command.ticket.CancelAirTicketCommand;
 import com.github.hippoom.ramblings.airswitch.command.ticket.CreateAirTicketCommand;
 import com.github.hippoom.ramblings.airswitch.command.ticket.DemandAirTicketCommand;
@@ -34,7 +35,9 @@ public class AirTicketUnitTests {
 						new AirTicketCreatedEvent(id, reservationId,
 								AirTicket.Status.NEW, 300),
 						new AirTicketItemCreatedEvent(id, 1, 100.00),
-						new AirTicketItemCreatedEvent(id, 2, 200.00));
+						new AirTicketItemCreatedEvent(id, 2, 200.00),
+						new AirTicketItemsCreatedEvent(id, reservationId,
+								300.00));
 
 	}
 

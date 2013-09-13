@@ -37,6 +37,8 @@ public class AirTicket extends AbstractAnnotatedAggregateRoot<Long> {
 		for (AirTicketItemCreatedEvent itemCreated : itemCreateds) {
 			apply(itemCreated);
 		}
+		apply(new AirTicketItemsCreatedEvent(command.getTicketId(),
+				command.getReservationId(), total));
 	}
 
 	@CommandHandler

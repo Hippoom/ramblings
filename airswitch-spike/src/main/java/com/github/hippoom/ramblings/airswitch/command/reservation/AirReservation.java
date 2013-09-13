@@ -10,6 +10,7 @@ public class AirReservation extends AbstractAnnotatedAggregateRoot<Long> {
 	@AggregateIdentifier
 	private Long reservationId;
 	private Status status;
+	private double totalAmount;
 
 	@CommandHandler
 	public AirReservation(CreateAirReservationCommand command) {
@@ -21,10 +22,22 @@ public class AirReservation extends AbstractAnnotatedAggregateRoot<Long> {
 				command.getItinerary()));
 	}
 
+	@CommandHandler
+	public void sum(CalculateTotalOfReservationCommand command) {
+		apply(new AirTicketSubtotalSummedEvent(command.getReservationId(),
+				command.getTicketId(), command.getAugend(), totalAmount
+						+ command.getAugend()));
+	}
+
 	@EventHandler
 	protected void on(AirReservationCreatedEvent event) {
 		this.reservationId = event.getReservationId();
 		this.status = event.getStatus();
+	}
+
+	@EventHandler
+	protected void on(AirTicketSubtotalSummedEvent event) {
+		this.totalAmount = event.getCurrentTotal();
 	}
 
 	public enum Status {
