@@ -9,6 +9,7 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.saga.annotation.AbstractAnnotatedSaga;
 import org.axonframework.saga.annotation.SagaEventHandler;
 import org.axonframework.saga.annotation.StartSaga;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.hippoom.ramblings.airswitch.command.reservation.AirTicketSubtotalSummedEvent;
 import com.github.hippoom.ramblings.airswitch.command.reservation.CalculateTotalOfReservationCommand;
@@ -16,6 +17,7 @@ import com.github.hippoom.ramblings.airswitch.command.ticket.AirTicketItemsCreat
 
 @SuppressWarnings("serial")
 public class MakeReservationSaga extends AbstractAnnotatedSaga {
+	@Autowired
 	@Setter
 	private transient CommandGateway commandGateway;
 
@@ -23,7 +25,7 @@ public class MakeReservationSaga extends AbstractAnnotatedSaga {
 
 	@StartSaga
 	@SagaEventHandler(associationProperty = "reservationId")
-	public void createTickets(AirTicketItemsCreatedEvent event) {
+	public void updateReservationTotalAmount(AirTicketItemsCreatedEvent event) {
 
 		ticketsToSum.put(event.getTicketId(), false);
 

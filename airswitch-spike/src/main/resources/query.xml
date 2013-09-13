@@ -5,6 +5,8 @@
 
 	<axon:annotation-config />
 	<bean
+		class="com.github.hippoom.ramblings.airswitch.query.AirReservationDetailSynchronizer" />
+	<bean
 		class="com.github.hippoom.ramblings.airswitch.query.AirTicketDetailSynchronizer" />
 	<bean
 		class="com.github.hippoom.ramblings.airswitch.query.AirTicketItemDetailSynchronizer" />

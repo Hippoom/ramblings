@@ -6,8 +6,15 @@
 	<axon:command-bus id="commandBus" transaction-manager="transactionManager" />
 	<axon:event-bus id="eventBus" />
 
+	<axon:event-sourcing-repository id="airReservationRepository"
+		aggregate-type="com.github.hippoom.ramblings.airswitch.command.reservation.AirReservation" />
+
 	<axon:event-sourcing-repository id="airTicketRepository"
 		aggregate-type="com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket" />
+
+	<axon:aggregate-command-handler id="airReservationHandler"
+		aggregate-type="com.github.hippoom.ramblings.airswitch.command.reservation.AirReservation"
+		repository="airReservationRepository" command-bus="commandBus" />
 
 	<axon:aggregate-command-handler id="airTicketHandler"
 		aggregate-type="com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket"
@@ -20,5 +27,11 @@
 		<property name="commandBus" ref="commandBus" />
 	</bean>
 
+	<axon:saga-manager id="sagaManager" saga-repository="sagaRepository">
+		<axon:types>
+	        com.github.hippoom.ramblings.airswitch.command.MakeReservationSaga
+    	</axon:types>
+	</axon:saga-manager>
 
+	<axon:jpa-saga-repository id="sagaRepository" />
 </beans>

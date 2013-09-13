@@ -5,23 +5,23 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import lombok.ToString;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 @Entity
-@Table(name = "t_airswitch_query_ticket")
+@Table(name = "t_airswitch_query_reservation")
 @DynamicUpdate
 @ToString
-public class AirTicketDetail {
+public class AirReservationDetail {
 	@Id
 	public Long id;
 	@Column
-	public Long reservation_id;
-	@Column
 	public String status;
 	@Column
-	public double total_amount;
+	public String booking_contact;
 	@Column
-	public String number;
+	public String itinerary;
+	@Column
+	public double total_amount;
 }
