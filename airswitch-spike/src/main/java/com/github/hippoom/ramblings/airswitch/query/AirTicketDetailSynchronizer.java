@@ -35,7 +35,7 @@ public class AirTicketDetailSynchronizer {
 		final AirTicketDetail ticket = findBy(event);
 
 		ticket.status = event.getStatus().name();
-		ticket.number = event.getNumber();
+		ticket.tkt_number = event.getNumber();
 
 		entityManager.persist(ticket);
 	}

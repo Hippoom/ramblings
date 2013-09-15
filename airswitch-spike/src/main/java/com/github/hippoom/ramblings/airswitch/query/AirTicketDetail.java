@@ -23,5 +23,5 @@ public class AirTicketDetail {
 	@Column
 	public double total_amount;
 	@Column
-	public String number;
+	public String tkt_number;
 }

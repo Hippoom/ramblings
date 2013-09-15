@@ -38,20 +38,24 @@ public class ApplicationRunner {
 		final Long ticketId1 = 1L;
 		final Long ticketId2 = 2L;
 
-		System.err.println("<<=======Create AirReservation======>>");
-
-		commandGateway.sendAndWait(new CreateAirReservationCommand(
-				reservationId, "John Doe", "SHA-->PEK"));
+		createAirReserationWith(reservationId);
 
 		createAirTicket(ticketId1, reservationId);
 		createAirTicket(ticketId2, reservationId);
 
-		// demandFor(ticketId);
+		//demandFor(ticketId1);
 
 		// cancelFor(ticketId);
 
-		queryAirReservationBy(reservationId);
+		// queryAirReservationBy(reservationId);
 		// queryAirTicketBy(ticketId1);
+	}
+
+	private void createAirReserationWith(final Long reservationId) {
+		System.err.println("<<=======Create AirReservation======>>");
+
+		commandGateway.sendAndWait(new CreateAirReservationCommand(
+				reservationId, "John Doe", "SHA-->PEK"));
 	}
 
 	private void createAirTicket(final Long ticketId, final Long reservationId) {

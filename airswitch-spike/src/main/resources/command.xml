@@ -6,6 +6,9 @@
 	<axon:command-bus id="commandBus" transaction-manager="transactionManager" />
 	<axon:event-bus id="eventBus" />
 
+	<bean id="xStreamSerializer"
+		class="com.github.hippoom.ramblings.airswitch.command.XStreamSerializerFactoryBean" />
+
 	<axon:event-sourcing-repository id="airReservationRepository"
 		aggregate-type="com.github.hippoom.ramblings.airswitch.command.reservation.AirReservation" />
 
@@ -20,7 +23,8 @@
 		aggregate-type="com.github.hippoom.ramblings.airswitch.command.ticket.AirTicket"
 		repository="airTicketRepository" command-bus="commandBus" />
 
-	<axon:jpa-event-store id="eventStore" />
+	<axon:jpa-event-store id="eventStore"
+		event-serializer="xStreamSerializer" />
 
 	<bean
 		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
