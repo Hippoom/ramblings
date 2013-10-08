@@ -14,14 +14,27 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	private String trackingId;
 
 	@CommandHandler
-	protected void handle(UpdateBookingContactCommand command) {
+	public Order(PlaceOrderCommand command) {
+		apply(new OrderPlacedEvent(command.getTrackingId(),
+				command.getBookingContact(), command.getTotalAmount()));
+	}
+
+	@CommandHandler
+	private void handle(UpdateBookingContactCommand command) {
 		apply(new BookingContactUpdatedEvent(command.getTrackingId(),
 				command.getBookingContact()));
 	}
 
 	@EventHandler
-	protected void on(OrderPlacedEvent event) {
+	private void on(OrderPlacedEvent event) {
 		this.trackingId = event.getTrackingId();
+	}
+
+	/**
+	 * for frameworks only
+	 */
+	@SuppressWarnings("unused")
+	private Order() {
 	}
 
 }
