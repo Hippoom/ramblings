@@ -1,4 +1,4 @@
-package com.github.hippoom.ramblings.ordercrqs.command;
+package com.github.hippoom.ramblings.ordercqrs.command;
 
 import lombok.Getter;
 

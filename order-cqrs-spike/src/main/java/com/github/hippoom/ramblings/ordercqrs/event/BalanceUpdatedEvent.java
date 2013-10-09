@@ -1,18 +1,18 @@
-package com.github.hippoom.ramblings.ordercrqs.event;
+package com.github.hippoom.ramblings.ordercqrs.event;
 
 import java.math.BigDecimal;
 
 import lombok.Getter;
 
-public class BalanceRecalculatedEvent {
+@Getter
+public abstract class BalanceUpdatedEvent {
+
 	private final String trackingId;
-	@Getter
 	private final BigDecimal totalAmount;
-	@Getter
 	private final BigDecimal paid;
 	private final String balanceStatus;
 
-	public BalanceRecalculatedEvent(String trackingId, BigDecimal totalAmount,
+	public BalanceUpdatedEvent(String trackingId, BigDecimal totalAmount,
 			BigDecimal paid, String balanceStatus) {
 		this.trackingId = trackingId;
 		this.totalAmount = totalAmount;

@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:axon="http://www.axonframework.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
+
+	<axon:annotation-config />
+
+	<axon:command-bus id="commandBus" transaction-manager="transactionManager" />
+
+	<bean
+		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+		<property name="commandBus" ref="commandBus" />
+	</bean>
+
+	<axon:event-bus id="eventBus" />
+
+	<bean id="xStreamSerializer"
+		class="com.github.hippoom.ramblings.ordercqrs.persistence.XStreamSerializerFactoryBean" />
+
+	<axon:event-sourcing-repository id="orderRepository"
+		aggregate-type="com.github.hippoom.ramblings.ordercqrs.domain.Order" />
+
+
+	<axon:aggregate-command-handler id="orderHandler"
+		aggregate-type="com.github.hippoom.ramblings.ordercqrs.domain.Order"
+		repository="orderRepository" command-bus="commandBus" />
+
+	<axon:jpa-event-store id="eventStore"
+		event-serializer="xStreamSerializer" />
+
+	<bean id="axonTransactionManager" class="org.axonframework.unitofwork.SpringTransactionManager">
+		<constructor-arg ref="transactionManager" />
+	</bean>
+
+	<axon:cluster id="defaultCluster" default="true" />
+</beans>

@@ -1,8 +1,8 @@
-package com.github.hippoom.ramblings.ordercrqs.domain;
+package com.github.hippoom.ramblings.ordercqrs.domain;
 
 import lombok.Getter;
 
-enum BalanceStatus {
+public enum BalanceStatus {
 
 	BALANCED("1"), UNBALANCED("0");
 	@Getter

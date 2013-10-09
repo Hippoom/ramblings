@@ -1,6 +1,9 @@
-package com.github.hippoom.ramblings.ordercrqs.event;
+package com.github.hippoom.ramblings.ordercqrs.event;
 
-public abstract class BookingContactUpdatedEvent {
+import lombok.Getter;
+
+@Getter
+public class BookingContactUpdatedEvent {
 
 	private final String trackingId;
 	private final String bookingContact;

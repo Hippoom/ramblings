@@ -1,12 +1,14 @@
-package com.github.hippoom.ramblings.ordercrqs.domain;
+package com.github.hippoom.ramblings.ordercqrs.domain;
 
-import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.*;
+import static com.github.hippoom.ramblings.ordercqrs.domain.BalanceStatus.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 
 import org.junit.Test;
+
+import com.github.hippoom.ramblings.ordercqrs.domain.Balance;
 
 public class BalanceUnitTests {
 

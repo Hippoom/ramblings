@@ -1,18 +1,19 @@
-package com.github.hippoom.ramblings.ordercrqs.domain;
-
+package com.github.hippoom.ramblings.ordercqrs.domain;
 
 import org.axonframework.commandhandling.annotation.CommandHandler;
 import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
-import com.github.hippoom.ramblings.ordercrqs.command.MakePaymentCommand;
-import com.github.hippoom.ramblings.ordercrqs.command.ModifyBookingContactCommand;
-import com.github.hippoom.ramblings.ordercrqs.command.PlaceOrderCommand;
-import com.github.hippoom.ramblings.ordercrqs.event.BalanceRecalculatedEvent;
-import com.github.hippoom.ramblings.ordercrqs.event.BookingContactGivenEvent;
-import com.github.hippoom.ramblings.ordercrqs.event.BookingContactModifiedEvent;
-import com.github.hippoom.ramblings.ordercrqs.event.OrderPlacedEvent;
+import com.github.hippoom.ramblings.ordercqrs.command.DiscountingCommand;
+import com.github.hippoom.ramblings.ordercqrs.command.MakePaymentCommand;
+import com.github.hippoom.ramblings.ordercqrs.command.ModifyBookingContactCommand;
+import com.github.hippoom.ramblings.ordercqrs.command.PlaceOrderCommand;
+import com.github.hippoom.ramblings.ordercqrs.event.BalanceUpdatedEvent;
+import com.github.hippoom.ramblings.ordercqrs.event.BookingContactUpdatedEvent;
+import com.github.hippoom.ramblings.ordercqrs.event.OrderDiscountedEvent;
+import com.github.hippoom.ramblings.ordercqrs.event.OrderPlacedEvent;
+import com.github.hippoom.ramblings.ordercqrs.event.PaymentMadeEvent;
 
 /**
  * 
@@ -35,9 +36,11 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	 */
 	@CommandHandler
 	public Order(PlaceOrderCommand command) {
+		this.balance = Balance.whenPlaced(command.getTotalAmount());
 		apply(new OrderPlacedEvent(command.getTrackingId(),
-				command.getWhenPlaced(), command.getTotalAmount()));
-		apply(new BookingContactGivenEvent(command.getTrackingId(),
+				command.getWhenPlaced(), balance.getTotalAmount(),
+				balance.getPaid(), balance.getStatus().getValue()));
+		apply(new BookingContactUpdatedEvent(command.getTrackingId(),
 				command.getBookingContact()));
 	}
 
@@ -49,7 +52,7 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	 */
 	@CommandHandler
 	protected void handle(ModifyBookingContactCommand command) {
-		apply(new BookingContactModifiedEvent(command.getTrackingId(),
+		apply(new BookingContactUpdatedEvent(command.getTrackingId(),
 				command.getBookingContact()));
 	}
 
@@ -65,7 +68,25 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 		// recalculate balance using rich value object
 		final Balance newBalance = this.balance.paidWith(command.getAmount());
 
-		apply(new BalanceRecalculatedEvent(command.getTrackingId(),
+		apply(new PaymentMadeEvent(this.trackingId,
+				newBalance.getTotalAmount(), newBalance.getPaid(), newBalance
+						.getStatus().getValue()));
+	}
+
+	/**
+	 * <pre>
+	 * for domain behavior
+	 * for detail read model
+	 * for search read model
+	 * </pre>
+	 */
+	@CommandHandler
+	protected void handle(DiscountingCommand command) {
+		// recalculate balance using rich value object
+		final Balance newBalance = this.balance.discountedWith(command
+				.getAmount());
+
+		apply(new OrderDiscountedEvent(this.trackingId,
 				newBalance.getTotalAmount(), newBalance.getPaid(), newBalance
 						.getStatus().getValue()));
 	}
@@ -77,7 +98,7 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	}
 
 	@EventHandler
-	private void on(BalanceRecalculatedEvent event) {
+	private void on(BalanceUpdatedEvent event) {
 		this.balance = Balance.reconsititue(event.getTotalAmount(),
 				event.getPaid());
 	}

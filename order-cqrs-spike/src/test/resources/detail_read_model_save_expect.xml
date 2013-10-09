@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<t_order_detail tracking_id="2" bc_name="John Doe"
+		when_placed="2011-01-01 12:22:44" total_amount="100.00" total_paid="0.00"
+		balance_status="0" />
+	<t_order_detail tracking_id="3" bc_name="John Doe"
+		when_placed="2011-01-01 12:22:44" total_amount="100.00" total_paid="0.00"
+		balance_status="0" />
+</dataset>

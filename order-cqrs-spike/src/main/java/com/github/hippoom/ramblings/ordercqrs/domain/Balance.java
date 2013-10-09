@@ -1,7 +1,7 @@
-package com.github.hippoom.ramblings.ordercrqs.domain;
+package com.github.hippoom.ramblings.ordercqrs.domain;
 
-import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.BALANCED;
-import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.UNBALANCED;
+import static com.github.hippoom.ramblings.ordercqrs.domain.BalanceStatus.BALANCED;
+import static com.github.hippoom.ramblings.ordercqrs.domain.BalanceStatus.UNBALANCED;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
@@ -49,6 +49,10 @@ public class Balance {
 		} else {
 			return BALANCED;
 		}
+	}
+
+	public Balance discountedWith(BigDecimal amount) {
+		return new Balance(totalAmount.subtract(amount), paid);
 	}
 
 }
