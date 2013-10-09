@@ -18,6 +18,7 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -36,11 +37,15 @@ public class AcceptanceTests {
 	@PersistenceUnit
 	private EntityManagerFactory em;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@Test
 	public void placesOrder_thenModifiesBookingContext_thenDiscounts_thenMakesPayment()
 			throws Throwable {
 		final String trackingId = nextIdentifier();
 		final Date today = today("20:12:44");
+		final long currentCountOfToday = count(today);
 
 		send(new PlaceOrderCommand(trackingId, today, "John Doe", with(100)));
 
@@ -52,6 +57,18 @@ public class AcceptanceTests {
 
 		waitForSynchronization();
 
+		assertDetailReadModelSynchronized(trackingId, today);
+
+		assertDailyCountIncremental(today, currentCountOfToday);
+	}
+
+	private void assertDailyCountIncremental(final Date today,
+			final long orderCountOfToday) {
+		assertThat(count(today), equalTo(orderCountOfToday + 1));
+	}
+
+	private void assertDetailReadModelSynchronized(final String trackingId,
+			final Date today) {
 		final OrderDetailReadModel order = queryDetail(trackingId);
 
 		assertThat(order.getBookingContactName(), equalTo("Geroge O'Malley"));
@@ -59,6 +76,15 @@ public class AcceptanceTests {
 		assertThat(order.getTotalAmount(), equalTo(with(70).doubleValue()));
 		assertThat(order.getTotalPaid(), equalTo(with(70).doubleValue()));
 		assertThat(order.getBalanceStatus(), equalTo(BALANCED.getValue()));
+	}
+
+	private long count(Date today) {
+
+		String sqlString = "select count(*) from t_daily_order_count_entry t where t.date_placed = '"
+				+ new SimpleDateFormat("yyyy-MM-dd").format(today) + "'";
+
+		return jdbcTemplate.queryForObject(sqlString, Number.class).longValue();
+
 	}
 
 	private void waitForSynchronization() throws InterruptedException {
@@ -83,7 +109,7 @@ public class AcceptanceTests {
 		String today = sdf.format(new Date());
 
 		today += (" " + time);
-		
+
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return df.parse(today);
 	}

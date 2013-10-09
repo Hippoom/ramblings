@@ -8,12 +8,16 @@
 
 	<bean
 		class="com.github.hippoom.ramblings.ordercqrs.query.detail.DetailReadModelSynchronizer" />
+	<bean
+		class="com.github.hippoom.ramblings.ordercqrs.query.daily.DailyReadModelSynchronizer" />
 
 
 	<axon:cluster id="asyncCluster">
 		<axon:selectors>
 			<axon:class-name-matches
 				pattern="com.github.hippoom.ramblings.ordercqrs.query.detail.DetailReadModelSynchronizer" />
+			<axon:class-name-matches
+				pattern="com.github.hippoom.ramblings.ordercqrs.query.daily.DailyReadModelSynchronizer" />
 		</axon:selectors>
 
 		<bean class="org.axonframework.eventhandling.async.AsynchronousCluster">

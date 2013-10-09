@@ -12,9 +12,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@EqualsAndHashCode(of = "trackingId")
+import org.hibernate.annotations.DynamicUpdate;
+
 @Entity
 @Table(name = "t_order_detail")
+@DynamicUpdate
+@EqualsAndHashCode(of = "trackingId")
 @Setter
 @Getter
 @ToString
