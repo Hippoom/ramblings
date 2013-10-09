@@ -1,6 +1,7 @@
 package com.github.hippoom.ramblings.ordercrqs.event;
 
-public class BookingContactUpdatedEvent {
+public abstract class BookingContactUpdatedEvent {
+
 	private final String trackingId;
 	private final String bookingContact;
 
@@ -8,4 +9,5 @@ public class BookingContactUpdatedEvent {
 		this.trackingId = trackingId;
 		this.bookingContact = bookingContact;
 	}
+
 }

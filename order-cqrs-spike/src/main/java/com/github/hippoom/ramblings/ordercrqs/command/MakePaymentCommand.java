@@ -1,18 +1,20 @@
 package com.github.hippoom.ramblings.ordercrqs.command;
 
+import java.math.BigDecimal;
+
 import lombok.Getter;
 
 import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 
-public class UpdateBookingContactCommand {
+public class MakePaymentCommand {
 	@Getter
 	@TargetAggregateIdentifier
 	private final String trackingId;
 	@Getter
-	private final String bookingContact;
+	private final BigDecimal amount;
 
-	public UpdateBookingContactCommand(String trackingId, String bookingContact) {
+	public MakePaymentCommand(String trackingId, BigDecimal amount) {
 		this.trackingId = trackingId;
-		this.bookingContact = bookingContact;
+		this.amount = amount;
 	}
 }
