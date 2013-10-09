@@ -1,12 +1,10 @@
 package com.github.hippoom.ramblings.ordercrqs.domain;
 
-import static com.github.hippoom.ramblings.ordercrqs.domain.Order.BalanceStatus.*;
+import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.BALANCED;
+import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.UNBALANCED;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
-
-import com.github.hippoom.ramblings.ordercrqs.domain.Order.BalanceStatus;
-import com.github.hippoom.ramblings.ordercrqs.event.BalanceRecalculatedEvent;
 
 import lombok.Getter;
 
@@ -36,8 +34,9 @@ public class Balance {
 		return new Balance(totalAmount, ZERO);
 	}
 
-	public static Balance from(BalanceRecalculatedEvent event) {
-		return new Balance(event.getTotalAmount(), event.getPaid());
+	protected static Balance reconsititue(final BigDecimal totalAmount,
+			final BigDecimal paid) {
+		return new Balance(totalAmount, paid);
 	}
 
 	public Balance paidWith(BigDecimal amount) {

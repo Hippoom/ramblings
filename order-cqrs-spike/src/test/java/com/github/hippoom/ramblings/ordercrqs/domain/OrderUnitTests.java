@@ -1,6 +1,6 @@
 package com.github.hippoom.ramblings.ordercrqs.domain;
 
-import static com.github.hippoom.ramblings.ordercrqs.domain.Order.BalanceStatus.UNBALANCED;
+import static com.github.hippoom.ramblings.ordercrqs.domain.BalanceStatus.UNBALANCED;
 
 import java.math.BigDecimal;
 import java.util.Date;

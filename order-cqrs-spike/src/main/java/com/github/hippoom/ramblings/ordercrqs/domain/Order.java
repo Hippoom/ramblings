@@ -1,6 +1,5 @@
 package com.github.hippoom.ramblings.ordercrqs.domain;
 
-import lombok.Getter;
 
 import org.axonframework.commandhandling.annotation.CommandHandler;
 import org.axonframework.eventhandling.annotation.EventHandler;
@@ -79,7 +78,8 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 
 	@EventHandler
 	private void on(BalanceRecalculatedEvent event) {
-		this.balance = Balance.from(event);
+		this.balance = Balance.reconsititue(event.getTotalAmount(),
+				event.getPaid());
 	}
 
 	/**
@@ -87,16 +87,5 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	 */
 	@SuppressWarnings("unused")
 	private Order() {
-	}
-
-	enum BalanceStatus {
-
-		BALANCED("1"), UNBALANCED("0");
-		@Getter
-		private String value;
-
-		BalanceStatus(String code) {
-			this.value = code;
-		}
 	}
 }
