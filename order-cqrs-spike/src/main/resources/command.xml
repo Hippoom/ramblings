@@ -33,4 +33,13 @@
 	</bean>
 
 	<axon:cluster id="defaultCluster" default="true" />
+
+	<axon:saga-manager id="sagaManager" saga-repository="sagaRepository">
+		<axon:async executor="taskExecutor" transaction-manager="transactionManager" />
+		<axon:types>
+	        com.github.hippoom.ramblings.ordercqrs.saga.NotifyCustomerSaga
+    	</axon:types>
+	</axon:saga-manager>
+
+	<axon:jpa-saga-repository id="sagaRepository" />
 </beans>

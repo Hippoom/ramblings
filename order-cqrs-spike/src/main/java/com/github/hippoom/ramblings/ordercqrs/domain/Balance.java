@@ -34,7 +34,7 @@ public class Balance {
 		return new Balance(totalAmount, ZERO);
 	}
 
-	protected static Balance reconsititue(final BigDecimal totalAmount,
+	public static Balance reconsititue(final BigDecimal totalAmount,
 			final BigDecimal paid) {
 		return new Balance(totalAmount, paid);
 	}

@@ -4,6 +4,7 @@ import static com.github.hippoom.ramblings.ordercqrs.domain.BalanceStatus.BALANC
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -15,6 +16,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ import com.github.hippoom.ramblings.ordercqrs.command.MakePaymentCommand;
 import com.github.hippoom.ramblings.ordercqrs.command.ModifyBookingContactCommand;
 import com.github.hippoom.ramblings.ordercqrs.command.PlaceOrderCommand;
 import com.github.hippoom.ramblings.ordercqrs.query.detail.OrderDetailReadModel;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:root.xml" })
@@ -39,6 +44,19 @@ public class AcceptanceTests {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
+	private GreenMail mailServer;
+
+	@Before
+	public void startMailServer() {
+		mailServer = new GreenMail();
+		mailServer.start();
+	}
+
+	@After
+	public void shutdownMailServer() {
+		mailServer.stop();
+	}
 
 	@Test
 	public void placesOrder_thenModifiesBookingContext_thenDiscounts_thenMakesPayment()
@@ -60,6 +78,18 @@ public class AcceptanceTests {
 		assertDetailReadModelSynchronized(trackingId, today);
 
 		assertDailyCountIncremental(today, currentCountOfToday);
+
+		assertBalancedNotificationMailSent(trackingId);
+	}
+
+	private void assertBalancedNotificationMailSent(final String trackingId)
+			throws InterruptedException {
+		assertTrue(mailServer.waitForIncomingEmail(2000, 1));
+		assertThat(GreenMailUtil.getBody(mailServer.getReceivedMessages()[0]),
+				equalTo(trackingId));
+//		assertThat(GreenMailUtil.getBody(mailServer.getReceivedMessages()[0]),
+//				equalTo("Congratulations, your order[" + trackingId
+//						+ "] is balanced."));
 	}
 
 	private void assertDailyCountIncremental(final Date today,

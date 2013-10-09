@@ -13,6 +13,6 @@
 	<import resource="classpath:command.xml" />
 	<import resource="classpath:query.xml" />
 	<import resource="classpath:persistence.xml" />
-
+	<import resource="classpath:mail.xml" />
 
 </beans>
