@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
 
 	<int:gateway id="mailSender"
-		service-interface="com.github.hippoom.ramblings.ordercqrs.mail.MailSender"
+		service-interface="com.github.hippoom.ramblings.ordercqrs.domain.CustomerNotifier"
 		default-request-channel="preSendMail" />
 
 	<int:channel id="preSendMail" />
