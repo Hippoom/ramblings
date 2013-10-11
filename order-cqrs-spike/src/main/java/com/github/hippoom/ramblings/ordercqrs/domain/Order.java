@@ -20,6 +20,7 @@ import com.github.hippoom.ramblings.ordercqrs.event.PaymentMadeEvent;
  * focus on the behavior, not state
  * 
  */
+
 @SuppressWarnings("serial")
 public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	@AggregateIdentifier

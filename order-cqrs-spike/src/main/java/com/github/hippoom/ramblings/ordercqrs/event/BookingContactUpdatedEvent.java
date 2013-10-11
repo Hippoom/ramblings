@@ -2,6 +2,11 @@ package com.github.hippoom.ramblings.ordercqrs.event;
 
 import lombok.Getter;
 
+/**
+ * 
+ * Indicating that the booking contact of the given has been updated.
+ * 
+ */
 @Getter
 public class BookingContactUpdatedEvent {
 
