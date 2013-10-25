@@ -11,10 +11,10 @@ public class ScheduledTaskRegistrarLearningTests {
 
 	@Test
 	public void inspectTaskScheduling() throws Throwable {
-		System.err.println("Fall asleep");
+		System.err.println(Thread.currentThread().getName() + " Fall asleep");
 
 		Thread.sleep(10000);// sleep 10 seconds
 
-		System.err.println("Wake up");
+		System.err.println(Thread.currentThread().getName() + " Wake up");
 	}
 }
