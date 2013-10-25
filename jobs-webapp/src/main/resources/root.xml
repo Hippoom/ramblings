@@ -12,19 +12,14 @@
 
 	<task:scheduler id="taskScheduler" pool-size="10" />
 
-	<bean id="scheduledTaskRegistrar"
-		class="org.springframework.scheduling.config.ScheduledTaskRegistrar">
+	<!-- <bean id="scheduledTaskRegistrar" class="org.springframework.scheduling.config.ScheduledTaskRegistrar"> 
+		<property name="taskScheduler" ref="taskScheduler" /> <property name="triggerTasks"> 
+		<map> <entry key-ref="printTask" value-ref="periodicTrigger" /> </map> </property> 
+		</bean> <bean id="printTask" class="com.github.hippoom.ramblings.jobs.PrintTask" 
+		/> <bean id="periodicTrigger" class="org.springframework.scheduling.support.PeriodicTrigger"> 
+		<constructor-arg value="1000" /> </bean> -->
+	<bean id="scheduledTaskRegistrar" class="com.github.hippoom.ramblings.jobs.DynamicTaskRegistar">
 		<property name="taskScheduler" ref="taskScheduler" />
-		<property name="triggerTasks">
-			<map>
-				<entry key-ref="printTask" value-ref="periodicTrigger" />
-			</map>
-		</property>
 	</bean>
 
-	<bean id="printTask" class="com.github.hippoom.ramblings.jobs.PrintTask" />
-
-	<bean id="periodicTrigger" class="org.springframework.scheduling.support.PeriodicTrigger">
-		<constructor-arg value="1000" />
-	</bean>
 </beans>
