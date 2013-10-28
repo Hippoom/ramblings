@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:int-groovy="http://www.springframework.org/schema/integration/groovy"
+	xsi:schemaLocation="
+	       http://www.springframework.org/schema/beans 	
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/integration
+           http://www.springframework.org/schema/integration/spring-integration.xsd
+           http://www.springframework.org/schema/integration/jms
+           http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+           http://www.springframework.org/schema/integration/groovy
+           http://www.springframework.org/schema/integration/groovy/spring-integration-groovy.xsd">
+
+	<int:channel id="inChannel" />
+	<int:channel id="returnChannel" />
+	<int:channel id="outChannel" />
+	<int:channel id="replyChannel">
+		<int:queue />
+	</int:channel>
+
+	<int-jms:outbound-gateway id="jmsOutGateway"
+		request-destination-name="outQueue" request-channel="outChannel"
+		reply-destination-name="replyQueue" reply-channel="replyChannel" />
+
+	<int-jms:inbound-gateway id="jmsInGateway"
+		request-destination-name="outQueue" request-channel="inChannel" />
+
+	<int:service-activator id="job" input-channel="inChannel">
+		<int-groovy:script>
+		<![CDATA[		    
+		        return payload;
+		]]>
+		</int-groovy:script>
+	</int:service-activator>
+
+	<bean id="connectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory">
+			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<property name="brokerURL"
+					value="vm://localhost:61616?broker.persistent=false" />
+			</bean>
+		</property>
+		<property name="sessionCacheSize" value="10" />
+		<property name="cacheProducers" value="false" />
+	</bean>
+
+</beans>
