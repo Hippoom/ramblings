@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/mail
+        http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
+
+	<int:gateway id="mailSender"
+		service-interface="com.github.hippoom.ramblings.ordercqrs.domain.CustomerNotifier"
+		default-request-channel="preSendMail" />
+
+	<int:channel id="preSendMail" />
+
+	<int:channel id="outboundMail" />
+
+	<int-mail:header-enricher input-channel="preSendMail"
+		output-channel="outboundMail">
+		<int-mail:to value="to@example.org" />
+		<!-- <int-mail:subject value="Congratulations, your order[' + @payload +  '] is balanced" />
+		<int-mail:overwite value="true" /> -->
+	</int-mail:header-enricher>
+
+	<int-mail:outbound-channel-adapter
+		channel="outboundMail" host="${runtime.mailing.host}" port="${runtime.mailing.port}"
+		username="${runtime.mailing.username}" password="${runtime.mailing.password}" />
+
+
+</beans>

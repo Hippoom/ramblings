@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<t_daily_order_count_entry tracking_id="2" date_placed="2011-01-01" />
+
+	<t_daily_order_count_entry tracking_id="3" date_placed="2011-01-01" />
+</dataset>

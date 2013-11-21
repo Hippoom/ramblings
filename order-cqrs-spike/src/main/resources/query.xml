@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:axon="http://www.axonframework.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
+
+
+
+
+	<bean
+		class="com.github.hippoom.ramblings.ordercqrs.query.detail.DetailReadModelSynchronizer" />
+	<bean
+		class="com.github.hippoom.ramblings.ordercqrs.query.daily.DailyReadModelSynchronizer" />
+
+
+	<axon:cluster id="asyncCluster">
+		<axon:selectors>
+			<axon:class-name-matches
+				pattern="com.github.hippoom.ramblings.ordercqrs.query.detail.DetailReadModelSynchronizer" />
+			<axon:class-name-matches
+				pattern="com.github.hippoom.ramblings.ordercqrs.query.daily.DailyReadModelSynchronizer" />
+		</axon:selectors>
+
+		<bean class="org.axonframework.eventhandling.async.AsynchronousCluster">
+			<constructor-arg name="identifier" value="async" />
+			<constructor-arg name="executor" ref="taskExecutor" />
+			<constructor-arg name="transactionManager" ref="axonTransactionManager" />
+			<constructor-arg name="sequencingPolicy" ref="sequentialPerAggregatePolicy" />
+		</bean>
+
+	</axon:cluster>
+
+	<bean id="sequentialPerAggregatePolicy"
+		class="org.axonframework.eventhandling.async.SequentialPerAggregatePolicy" />
+
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="2" />
+		<property name="maxPoolSize" value="5" />
+		<property name="waitForTasksToCompleteOnShutdown" value="true" />
+	</bean>
+
+
+</beans>
