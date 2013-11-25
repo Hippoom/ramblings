@@ -12,6 +12,7 @@ public class RoomRateUnitTests {
 				"2013-04-01"));
 
 		assertThat(roomRate.averageAmountBeforeTax(), equalTo(100.0));
+		assertThat(roomRate.dateRange(), equalTo(DateRange.at("2013-04-01")));
 	}
 
 	@Test
@@ -20,6 +21,8 @@ public class RoomRateUnitTests {
 				"2013-04-01"), new Rate(110, "2013-04-02"));
 
 		assertThat(roomRate.averageAmountBeforeTax(), equalTo(105.0));
+		assertThat(roomRate.dateRange(),
+				equalTo(DateRange.of("2013-04-01", "2013-04-02")));
 	}
 
 	@Test
@@ -27,7 +30,9 @@ public class RoomRateUnitTests {
 		final RoomRate roomRate = new RoomRate("STD", "BAR", new Rate(120,
 				"2013-04-01", "2013-04-02"));
 
-		assertThat(roomRate.averageAmountBeforeTax(), equalTo(120.0));
+		assertThat(roomRate.averageAmountBeforeTax(), equalTo(60.0));
+		assertThat(roomRate.dateRange(),
+				equalTo(DateRange.of("2013-04-01", "2013-04-02")));
 	}
 
 }

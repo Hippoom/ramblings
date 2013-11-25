@@ -2,6 +2,7 @@ package com.github.hippoom.ramblings.hotelcatalog;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RoomRate {
@@ -20,10 +21,9 @@ public class RoomRate {
 	}
 
 	public double averageAmountBeforeTax() {
-		int dates = 0;
+		int dates = dateRange().days();
 		BigDecimal total = BigDecimal.ZERO;
 		for (Rate rate : rates()) {
-			++dates;
 			total = total.add(rate.amountBeforeTax());
 		}
 		return total.divide(BigDecimal.valueOf(dates)).doubleValue();
@@ -31,6 +31,30 @@ public class RoomRate {
 
 	private List<Rate> rates() {
 		return rates;
+	}
+
+	public DateRange dateRange() {
+		List<DateRange> dateRanges = new ArrayList<DateRange>();
+		for (Rate rate : rates()) {
+			dateRanges.add(rate.dateRange());
+		}
+		if (dateRanges.size() == 1) {
+			return dateRanges.get(0);
+		}
+		Date start = null;
+		Date end = null;
+		start = dateRanges.get(0).start();
+		end = dateRanges.get(0).end();
+		for (int i = 1; i < dateRanges.size(); i++) {
+			DateRange current = dateRanges.get(i);
+			if (start.after(current.start())) {
+				start = current.start();
+			}
+			if (end.before(current.end())) {
+				end = current.end();
+			}
+		}
+		return DateRange.of(start, end);
 	}
 
 }

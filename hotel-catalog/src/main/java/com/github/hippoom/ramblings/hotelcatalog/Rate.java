@@ -13,11 +13,15 @@ public class Rate {
 
 	public Rate(int amountBeforeTax, String start, String end) {
 		this.amountBeforeTax = amountBeforeTax;
-		this.dateRange = new DateRange(start, end);
+		this.dateRange = DateRange.of(start, end);
 	}
 
 	public BigDecimal amountBeforeTax() {
 		return BigDecimal.valueOf(amountBeforeTax);
+	}
+
+	public DateRange dateRange() {
+		return dateRange;
 	}
 
 }
