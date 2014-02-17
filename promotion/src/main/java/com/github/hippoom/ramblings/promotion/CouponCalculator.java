@@ -1,32 +1,19 @@
 package com.github.hippoom.ramblings.promotion;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CouponCalculator {
 
-	private double totalAmountAfter;
-	private double totalOff;
+	private Map<String, CouponCaculatorInstance> instances = new HashMap<String, CouponCaculatorInstance>();
 
-	public CouponCalculator(double threshold, double off,
-			double totalAmountBefore) {
-		this.totalOff = BigDecimal.valueOf(totalAmountBefore)
-				.divide(BigDecimal.valueOf(threshold), 0, RoundingMode.FLOOR)
-				.multiply(BigDecimal.valueOf(off)).doubleValue();
-		this.totalAmountAfter = totalAmountBefore - totalOff;
+	public double totalAmountAfter(String identifier, double totalAmountBefore) {
+		return instances.get(identifier).calculateWith(totalAmountBefore);
 	}
 
-	public CouponCalculator(double thresholdPerSpent, double thresholdTotal,
-			double off, double totalAmountBefore) {
-		this.totalOff = thresholdTotal < totalAmountBefore ? off : 0;
-		this.totalAmountAfter = totalAmountBefore - totalOff;
-	}
-
-	public double totalOff() {
-		return totalOff;
-	}
-
-	public double totalAmountAfter() {
-		return totalAmountAfter;
+	public void addCaculatorInstance(
+			CouponCaculatorInstance couponCaculatorInstance) {
+		instances.put(couponCaculatorInstance.identifier(),
+				couponCaculatorInstance);
 	}
 }
