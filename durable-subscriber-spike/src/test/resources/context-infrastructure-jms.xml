@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/jms
+        http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd">
+
+	<int:channel id="channelForSubscriber1" />
+	<int:channel id="channelForSubscriber2" />
+
+	<!-- <int-jms:message-driven-channel-adapter id="mdcaForSubscriber1" pub-sub-domain="true" 
+		destination="durable-publication" channel="channelForSubscriber1" /> <int-jms:message-driven-channel-adapter 
+		id="mdcaForSubscriber2" pub-sub-domain="true" destination="durable-publication" 
+		channel="channelForSubscriber2" /> -->
+
+	<bean id="durable-publication" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="durable-publication" />
+	</bean>
+
+	<bean id="amqConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://localhost:61616?broker.persistent=false" />
+		<property name="clientID" value="dsName" />
+	</bean>
+
+	<bean id="connectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="amqConnectionFactory" />
+	</bean>
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+
+	<bean id="messageListenerContainerForSubscriber1"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="destination" ref="durable-publication" />
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="messageListener" ref="messageListenerForSubscriber1" />
+		<property name="pubSubDomain" value="true" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="durable-publication1" />
+	</bean>
+
+	<bean id="messageListenerContainerForSubscriber2"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="destination" ref="durable-publication" />
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="messageListener" ref="messageListenerForSubscriber2" />
+		<property name="pubSubDomain" value="true" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="durable-publication1" />
+	</bean>
+
+	<int:service-activator id="saForSubscriber1"
+		input-channel="channelForSubscriber1" ref="subscriber1" method="receive" />
+	<int:service-activator id="saForSubscriber2"
+		input-channel="channelForSubscriber2" ref="subscriber2" method="receive" />
+
+	<bean id="messageListenerForSubscriber1"
+		class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<property name="delegate" ref="subscriber1" />
+		<property name="defaultListenerMethod" value="receive" />
+	</bean>
+
+	<bean id="messageListenerForSubscriber2"
+		class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<property name="delegate" ref="subscriber2" />
+		<property name="defaultListenerMethod" value="receive" />
+	</bean>
+
+	<bean id="subscriber1" class="com.github.hippoom.ramblings.dss.SubscriberStub">
+	</bean>
+	<bean id="subscriber2" class="com.github.hippoom.ramblings.dss.SubscriberStub">
+	</bean>
+</beans>
