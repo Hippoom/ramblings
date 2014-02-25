@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.axonframework.eventhandling.annotation.EventHandler;
 
-import com.github.hippoom.ramblings.billing.domain.events.PaymentMadeEvent;
+import com.github.hippoom.ramblings.ordering.events.PaymentMadeEvent;
 
 @Slf4j
 public class ReceiptViewSynchronizer {

@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.hippoom.ramblings.billing.domain.events.PaymentMadeEvent;
-import com.github.hippoom.ramblings.billing.domain.model.payment.Payment;
+import com.github.hippoom.ramblings.billing.query.ReceiptViewStore;
+import com.github.hippoom.ramblings.billing.query.ReceiptViewSynchronizer;
+import com.github.hippoom.ramblings.ordering.domain.model.gathering.By;
+import com.github.hippoom.ramblings.ordering.domain.model.order.Order;
+import com.github.hippoom.ramblings.ordering.events.PaymentMadeEvent;
 
 public class ReceiptViewSynchronizerUnitTests {
 	@Rule
@@ -39,6 +42,6 @@ public class ReceiptViewSynchronizerUnitTests {
 		});
 
 		handler.on(new PaymentMadeEvent(sequence, orderId, amount,
-				Payment.By.CASH.name(), receiptNo));
+				Order.BalanceStatus.BALANCED.name(), By.CASH.name(), receiptNo));
 	}
 }

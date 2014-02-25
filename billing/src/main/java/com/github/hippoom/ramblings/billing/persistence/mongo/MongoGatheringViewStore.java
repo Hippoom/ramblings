@@ -10,13 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.axonframework.eventhandling.annotation.EventHandler;
 
-import com.github.hippoom.ramblings.billing.domain.events.OrderPlacedEvent;
-import com.github.hippoom.ramblings.billing.domain.events.PaymentGatheredEvent;
-import com.github.hippoom.ramblings.billing.domain.events.PaymentMadeEvent;
 import com.github.hippoom.ramblings.billing.query.GatheringView;
 import com.github.hippoom.ramblings.billing.query.GatheringViewStore;
-import com.github.hippoom.ramblings.billing.query.PaymentView;
-import com.github.hippoom.ramblings.billing.query.PaymentViewStore;
+import com.github.hippoom.ramblings.ordering.events.OrderPlacedEvent;
+import com.github.hippoom.ramblings.ordering.events.PaymentGatheredEvent;
+import com.github.hippoom.ramblings.ordering.events.PaymentMadeEvent;
+import com.github.hippoom.ramblings.ordering.query.PaymentView;
+import com.github.hippoom.ramblings.ordering.query.PaymentViewStore;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;

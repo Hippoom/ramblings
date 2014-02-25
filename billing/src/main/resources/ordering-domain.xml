@@ -10,14 +10,9 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	<import resource="ordering-command-handling.xml" />
-	<import resource="ordering-axon.xml" />
-	<import resource="ordering-mongo.xml" />
-	<import resource="ordering-domain.xml" />
+	<bean id="randomUuidIdentifierGenerator"
+		class="com.github.hippoom.ramblings.ordering.domain.shared.RandomUuidIdentifierGenerator" />
 
-	<import resource="billing-query.xml" />
-	<import resource="billing-mongo.xml" />
 
-	<import resource="axon.xml" />
-	<import resource="mongo.xml" />
+
 </beans>

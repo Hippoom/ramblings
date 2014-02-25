@@ -3,18 +3,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
 
-	<axon:annotation-config />
 
-	<axon:command-bus id="commandBus" />
-	<axon:event-bus id="eventBus" />
 
-	<axon:filesystem-event-store id="eventStore"
-		base-dir="/data/billing" />
+	<axon:event-sourcing-repository id="orderRepository"
+		aggregate-type="com.github.hippoom.ramblings.ordering.domain.model.order.Order" />
 
-	<bean
-		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
-		<property name="commandBus" ref="commandBus" />
-	</bean>
+
 
 
 </beans>
