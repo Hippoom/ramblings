@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:axon="http://www.axonframework.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd">
+
+	<axon:annotation-config />
+
+	<axon:command-bus id="commandBus" />
+	<axon:event-bus id="eventBus" />
+
+	<axon:filesystem-event-store id="eventStore"
+		base-dir="/data/gordering" />
+
+	<bean id="orderingService"
+		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+		<property name="commandBus" ref="commandBus" />
+		<property name="gatewayInterface"
+			value="com.github.hippoom.ramblings.gordering.commands.OrderingService" />
+	</bean>
+
+	<axon:event-sourcing-repository id="orderRepository"
+		aggregate-type="com.github.hippoom.ramblings.gordering.domain.Order" />
+
+	<axon:aggregate-command-handler id="orderHandler"
+		aggregate-type="com.github.hippoom.ramblings.gordering.domain.Order"
+		repository="orderRepository" command-bus="commandBus" />
+</beans>

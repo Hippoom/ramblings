@@ -10,10 +10,37 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<axon.version>2.0.8</axon.version>
+		<hsqldb.version>2.3.0</hsqldb.version>
+		<spring.version>3.2.3.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
-		<!-- general test -->
+
+		<!-- ioc container -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<!-- cqrs -->
+		<dependency>
+			<groupId>org.axonframework</groupId>
+			<artifactId>axon-core</artifactId>
+			<version>${axon.version}</version>
+		</dependency>
+
+		<!-- persistence -->
+		
+		<!-- test infrastructure -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -37,16 +64,17 @@
 			<artifactId>jmock-junit4</artifactId>
 			<version>2.6.0</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>hamcrest-core</artifactId>
-					<groupId>org.hamcrest</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>junit-dep</artifactId>
-					<groupId>junit</groupId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.axonframework</groupId>
+			<artifactId>axon-test</artifactId>
+			<version>2.0.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<!-- code generation -->
 		<dependency>
