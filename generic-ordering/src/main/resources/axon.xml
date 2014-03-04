@@ -8,8 +8,9 @@
 	<axon:command-bus id="commandBus" />
 	<axon:event-bus id="eventBus" />
 
+
 	<axon:filesystem-event-store id="eventStore"
-		base-dir="/data/gordering" />
+		base-dir="target/data/gordering" />
 
 	<bean id="orderingService"
 		class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">

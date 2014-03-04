@@ -7,4 +7,7 @@
 
 	<bean id="orderQueryService"
 		class="com.github.hippoom.ramblings.gordering.test.InMemoryOrderQueryService" />
+		
+	<bean id="bookingAdapter"
+		class="com.github.hippoom.ramblings.gordering.test.InMemoryBookingAdapter" />
 </beans>

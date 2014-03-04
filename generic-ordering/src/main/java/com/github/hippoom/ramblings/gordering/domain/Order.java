@@ -7,6 +7,7 @@ import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
 import com.github.hippoom.ramblings.gordering.commands.PlaceOrderCommand;
 import com.github.hippoom.ramblings.gordering.events.OrderPlacedEvent;
+import com.github.hippoom.ramblings.gordering.events.ReservationSpecificationRequestedEvent;
 
 public class Order extends AbstractAnnotatedAggregateRoot<String> {
 
@@ -19,6 +20,10 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	public Order(PlaceOrderCommand command) {
 		apply(new OrderPlacedEvent(command.getTrackingId(),
 				command.getMemberId(), Status.FULLFILLING.name()));
+		for (String rs : command.getReservationSpecifications()) {
+			apply(new ReservationSpecificationRequestedEvent(
+					command.getTrackingId(), rs));
+		}
 	}
 
 	@EventHandler
