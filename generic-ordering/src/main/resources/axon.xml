@@ -25,4 +25,10 @@
 	<axon:aggregate-command-handler id="orderHandler"
 		aggregate-type="com.github.hippoom.ramblings.gordering.domain.Order"
 		repository="orderRepository" command-bus="commandBus" />
+
+	<axon:saga-manager id="sagaManager">
+		<axon:types>
+	        com.github.hippoom.ramblings.gordering.domain.OrderFullfillingSaga
+    	</axon:types>
+	</axon:saga-manager>
 </beans>

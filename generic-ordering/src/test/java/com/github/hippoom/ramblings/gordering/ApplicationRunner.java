@@ -1,6 +1,7 @@
 package com.github.hippoom.ramblings.gordering;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -9,6 +10,8 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.axonframework.domain.GenericEventMessage;
+import org.axonframework.eventhandling.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +22,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.hippoom.ramblings.booking.events.ReservationSpecificationHandledEvent;
 import com.github.hippoom.ramblings.gordering.commands.OrderingService;
 import com.github.hippoom.ramblings.gordering.commands.PlaceOrderCommand;
+import com.github.hippoom.ramblings.gordering.domain.Order;
 import com.github.hippoom.ramblings.gordering.query.OrderView;
 import com.github.hippoom.ramblings.gordering.test.InMemoryBookingAdapter;
 import com.github.hippoom.ramblings.gordering.test.InMemoryOrderQueryService;
@@ -34,6 +39,8 @@ public class ApplicationRunner implements ApplicationContextAware {
 	private InMemoryOrderQueryService orderQueryService;
 	@Autowired
 	private InMemoryBookingAdapter bookingAdapter;
+	@Autowired
+	private EventBus eventBus;
 
 	private ApplicationContext applicationContext;
 
@@ -60,6 +67,19 @@ public class ApplicationRunner implements ApplicationContextAware {
 				reservationSpecs,
 				contains("MU8754_2014-04-01_1_$100",
 						"Garden-Hotel_2014-04-01_1_$100"));
+
+		eventBus.publish(new GenericEventMessage<ReservationSpecificationHandledEvent>(
+				new ReservationSpecificationHandledEvent("flight res id",
+						trackingId, 1, 200.0)));
+		eventBus.publish(new GenericEventMessage<ReservationSpecificationHandledEvent>(
+				new ReservationSpecificationHandledEvent("hotel res id",
+						trackingId, 2, 400.0)));
+
+		final OrderView fullfilled = orderQueryService.trackingIdAs(trackingId);
+
+		assertThat(fullfilled.getStatus(),
+				equalTo(Order.Status.WAIT_PAYMENT.name()));
+		assertThat(fullfilled.getTotalAmount(), equalTo(600.0));
 	}
 
 	@Override

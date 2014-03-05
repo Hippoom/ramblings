@@ -5,7 +5,12 @@ import org.axonframework.test.Fixtures;
 import org.junit.Test;
 
 import com.github.hippoom.ramblings.gordering.commands.PlaceOrderCommand;
+import com.github.hippoom.ramblings.gordering.commands.UpdateOrderAsWaitPaymentCommand;
+import com.github.hippoom.ramblings.gordering.commands.UpdateOrderLineAmountCommand;
+import com.github.hippoom.ramblings.gordering.events.OrderFullfilledEvent;
+import com.github.hippoom.ramblings.gordering.events.OrderLineAmountUpdatedEvent;
 import com.github.hippoom.ramblings.gordering.events.OrderPlacedEvent;
+import com.github.hippoom.ramblings.gordering.events.OrderPlacedEventFixture;
 import com.github.hippoom.ramblings.gordering.events.ReservationSpecificationRequestedEvent;
 
 public class OrderUnitTests {
@@ -26,9 +31,35 @@ public class OrderUnitTests {
 						new OrderPlacedEvent(trackingId, memberId,
 								Order.Status.FULLFILLING.name()),
 						new ReservationSpecificationRequestedEvent(trackingId,
-								rs1),
+								1, rs1),
 						new ReservationSpecificationRequestedEvent(trackingId,
-								rs2)).expectVoidReturnType();
+								2, rs2)).expectVoidReturnType();
 	}
 
+	@Test
+	public void publishesOrderLineAmountUpdatedEvent() throws Throwable {
+		final String trackingId = "123";
+
+		fixture.given(
+				new OrderPlacedEventFixture(trackingId).build(),
+				new ReservationSpecificationRequestedEvent(trackingId, 1, "rs1"))
+				.when(new UpdateOrderLineAmountCommand(trackingId, 1, 100.0))
+				.expectEvents(
+						new OrderLineAmountUpdatedEvent(trackingId, 1, 100.0))
+				.expectVoidReturnType();
+	}
+
+	@Test
+	public void publishesOrderFullfilledEvent() throws Throwable {
+		final String trackingId = "123";
+
+		fixture.given(
+				new OrderPlacedEventFixture(trackingId).build(),
+				new ReservationSpecificationRequestedEvent(trackingId, 1, "rs1"))
+				.when(new UpdateOrderAsWaitPaymentCommand(trackingId))
+				.expectEvents(
+						new OrderFullfilledEvent(trackingId,
+								Order.Status.WAIT_PAYMENT.name()))
+				.expectVoidReturnType();
+	}
 }

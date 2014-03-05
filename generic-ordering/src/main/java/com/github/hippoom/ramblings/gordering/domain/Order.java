@@ -6,6 +6,10 @@ import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
 import com.github.hippoom.ramblings.gordering.commands.PlaceOrderCommand;
+import com.github.hippoom.ramblings.gordering.commands.UpdateOrderAsWaitPaymentCommand;
+import com.github.hippoom.ramblings.gordering.commands.UpdateOrderLineAmountCommand;
+import com.github.hippoom.ramblings.gordering.events.OrderFullfilledEvent;
+import com.github.hippoom.ramblings.gordering.events.OrderLineAmountUpdatedEvent;
 import com.github.hippoom.ramblings.gordering.events.OrderPlacedEvent;
 import com.github.hippoom.ramblings.gordering.events.ReservationSpecificationRequestedEvent;
 
@@ -20,10 +24,23 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	public Order(PlaceOrderCommand command) {
 		apply(new OrderPlacedEvent(command.getTrackingId(),
 				command.getMemberId(), Status.FULLFILLING.name()));
+		int seq = 0;
 		for (String rs : command.getReservationSpecifications()) {
 			apply(new ReservationSpecificationRequestedEvent(
-					command.getTrackingId(), rs));
+					command.getTrackingId(), ++seq, rs));
 		}
+	}
+
+	@CommandHandler
+	public void handle(UpdateOrderLineAmountCommand command) {
+		apply(new OrderLineAmountUpdatedEvent(command.getTrackingId(),
+				command.getSeq(), command.getAmount()));
+	}
+
+	@CommandHandler
+	public void handle(UpdateOrderAsWaitPaymentCommand command) {
+		apply(new OrderFullfilledEvent(command.getTrackingId(),
+				Order.Status.WAIT_PAYMENT.name()));
 	}
 
 	@EventHandler
@@ -38,6 +55,6 @@ public class Order extends AbstractAnnotatedAggregateRoot<String> {
 	}
 
 	public static enum Status {
-		FULLFILLING
+		FULLFILLING, WAIT_PAYMENT
 	}
 }
